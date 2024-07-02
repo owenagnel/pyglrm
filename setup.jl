@@ -1,19 +1,37 @@
-# setup.jl
 using Pkg
 
-function ensure(package::String)
-    installed_packages = keys(Pkg.dependencies())
-    if package ∉ installed_packages
-        println("Installing $package...")
-        Pkg.add(package)
+function ensure(package::String, commit::String="")
+    installed_packages = Dict{String, String}()
+    for (name, info) in Pkg.dependencies()
+        installed_packages[string(name)] = string(info.uuid)
+    end
+
+    if package ∉ keys(installed_packages) || !is_package_commit_installed(package, commit)
+        println("Installing $package at commit $commit...")
+        if commit == ""
+            Pkg.add(package)
+        else
+            Pkg.add(PackageSpec(name=package, rev=commit))
+        end
     else
-        println("$package is already installed.")
+        println("$package at commit $commit is already installed.")
     end
 end
 
+function is_package_commit_installed(package::String, commit::String)::Bool
+    # Retrieve package status
+    pkgs = Pkg.status(; mode=Pkg.REPLMode.PkgStatusMode.CLEAN)
+    for pkg in pkgs
+        if pkg.name == package && pkg.commit == commit
+            return true
+        end
+    end
+    return false
+end
+
 # Ensure that Julia is configured with the necessary packages.
-ENV["PYTHON"] = ARGS[1] # Setup using "current" version of Python.
-ensure("LowRankModels")
+ENV["PYTHON"] = ARGS[1]  # Setup using "current" version of Python.
+ensure("LowRankModels", "e15afec")
 ensure("NullableArrays")
 ensure("FactCheck")
 ensure("PyCall")
