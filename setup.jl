@@ -2,7 +2,7 @@
 using Pkg
 
 function ensure(package::String)  # Install package if not installed.
-  if typeof(Pkg.installed(package)) == Void
+  if typeof(installed(package)) == Void
     Pkg.add(package)
   end
 end
