@@ -1,10 +1,14 @@
 # setup.jl
 using Pkg
 
-function ensure(package::String)  # Install package if not installed.
-  if typeof(Pkg.installed(package)) == Void
-    Pkg.add(package)
-  end
+function ensure(package::String)
+    installed_packages = keys(Pkg.dependencies())
+    if package ∉ installed_packages
+        println("Installing $package...")
+        Pkg.add(package)
+    else
+        println("$package is already installed.")
+    end
 end
 
 # Ensure that Julia is configured with the necessary packages.
