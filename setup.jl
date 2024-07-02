@@ -1,7 +1,6 @@
 using Pkg
 
 function ensure(package::String, commit::String="")
-    # Check if the package is installed with the specific commit.
     if package_installed_at_commit(package, commit)
         println("$package at commit $commit is already installed.")
     else
@@ -16,17 +15,15 @@ end
 
 function package_installed_at_commit(package::String, commit::String)::Bool
     # Retrieve the package status
-    pkgs = Pkg.status(; mode=Pkg.REPLMode.PkgStatusMode.PKGS)
-    for pkg in pkgs
-        if pkg.name == package
-            if commit == "" || (commit != "" && startswith(pkg.revision, commit))
-                return true
-            end
+    pkgs = Pkg.installed()
+    if haskey(pkgs, package)
+        installed_commit = pkgs[package]
+        if commit == "" || startswith(installed_commit, commit)
+            return true
         end
     end
     return false
 end
-
 
 
 # Ensure that Julia is configured with the necessary packages.
