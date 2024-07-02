@@ -1,33 +1,33 @@
 using Pkg
 
 function ensure(package::String, commit::String="")
-    installed_packages = Dict{String, String}()
-    for (name, info) in Pkg.dependencies()
-        installed_packages[string(name)] = string(info.uuid)
-    end
-
-    if package ∉ keys(installed_packages) || !is_package_commit_installed(package, commit)
+    # Check if the package is installed with the specific commit.
+    if package_installed_at_commit(package, commit)
+        println("$package at commit $commit is already installed.")
+    else
         println("Installing $package at commit $commit...")
         if commit == ""
             Pkg.add(package)
         else
             Pkg.add(PackageSpec(name=package, rev=commit))
         end
-    else
-        println("$package at commit $commit is already installed.")
     end
 end
 
-function is_package_commit_installed(package::String, commit::String)::Bool
-    # Retrieve package status
-    pkgs = Pkg.status(; mode=Pkg.REPLMode.PkgStatusMode.CLEAN)
+function package_installed_at_commit(package::String, commit::String)::Bool
+    # Retrieve the package status
+    pkgs = Pkg.status(; mode=Pkg.REPLMode.PkgStatusMode.PKGS)
     for pkg in pkgs
-        if pkg.name == package && pkg.commit == commit
-            return true
+        if pkg.name == package
+            if commit == "" || (commit != "" && startswith(pkg.revision, commit))
+                return true
+            end
         end
     end
     return false
 end
+
+
 
 # Ensure that Julia is configured with the necessary packages.
 ENV["PYTHON"] = ARGS[1]  # Setup using "current" version of Python.
