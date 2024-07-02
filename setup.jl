@@ -1,4 +1,5 @@
 # setup.jl
+using Pkg
 
 function ensure(package::String)  # Install package if not installed.
   if typeof(Pkg.installed(package)) == Void
