@@ -18,7 +18,7 @@ end
 # Ensure that Julia is configured with the necessary packages.
 ENV["PYTHON"] = ARGS[1]  # Setup using "current" version of Python.
 ensure("LowRankModels", "e15afec")
-ensure("NullableArrays")
+#ensure("NullableArrays")
 ensure("FactCheck")
 ensure("PyCall")
 
