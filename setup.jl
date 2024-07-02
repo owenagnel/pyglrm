@@ -19,7 +19,7 @@ end
 ENV["PYTHON"] = ARGS[1]  # Setup using "current" version of Python.
 ensure("LowRankModels", "e15afec")
 #ensure("NullableArrays")
-ensure("FactCheck")
+#ensure("FactCheck")
 ensure("PyCall")
 
 # This sets the version of the packages that are used.  In the long term it
